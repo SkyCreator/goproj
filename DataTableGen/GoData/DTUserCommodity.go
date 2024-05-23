@@ -46,15 +46,12 @@ func (dt *DTUserCommodity) ParseData(data []string) {
 		idx++
 	}
 }
-func (dt *DTUserCommodity) GetId() int {
-	return dt.Id
-}
 
 type DTUserCommodityTable struct {
 	drs []*DTUserCommodity
 }
 
-func (dt *DTUserCommodityTable) GetRows() int {
+func (dt *DTUserCommodityTable) Rows() int {
 	return len(dt.drs)
 }
 
@@ -66,20 +63,21 @@ func (dt *DTUserCommodityTable) Get(id int) *DTUserCommodity {
 	}
 	return nil
 }
-func (dt *DTUserCommodityTable) GetByIndex(index int) *DTUserCommodity {
-	return dt.drs[index]
+func (dt *DTUserCommodityTable) GetAll() []*DTUserCommodity {
+	return dt.drs
 }
-func (dt *DTUserCommodityTable) ParseData(data [][]string) error {
+
+func (dt *DTUserCommodityTable) parseData(data [][]string) error {
 	l := len(data)
-	dt.drs = make([]*DTUserCommodity, l-3)
 	var index = 0
 	for i := 3; i < l; i++ {
 		row := data[i][0]
 		if strings.IndexByte(row, '#') == 0 {
 			continue
 		}
-		dt.drs[index] = NewDTUserCommodity()
-		dt.drs[index].ParseData(data[i])
+		drs := NewDTUserCommodity()
+		drs.ParseData(data[i])
+		dt.drs = append(dt.drs, drs)
 		index++
 	}
 	return nil
