@@ -1,13 +1,9 @@
 package GoData
 
-import "fmt"
-
-func CreateDataRow(name string) (IDataRow, error) {
-	switch name {
-	case "DTUserCommodity":
-		return &DTUserCommodity{}, nil
-	default:
-		err := fmt.Errorf("CreateDataRow: %s not found", name)
-		return nil, err
+func (d *DataTableManager) CreateAndParseDataTable(name string, rows [][]string) error {
+	if name == "DTUserCommodity" {
+		dt := d.GetDTUserCommodityTable()
+		dt.ParseData(rows)
 	}
+	return nil
 }
