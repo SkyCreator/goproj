@@ -1,9 +1,9 @@
 package GoData
 
 import (
-	"GenDataTable/libFile"
 	"fmt"
 	"github.com/xuri/excelize/v2"
+	"os"
 	"strings"
 )
 
@@ -24,8 +24,9 @@ func newDataTableManager() *DataTableManager {
 	return &DataTableManager{DataTableMap: make(map[string]any)}
 }
 func (d *DataTableManager) ReadAllDataTable() error {
-	files, err := libFile.GetFilesFromDir(DATA_TABLE_PATH)
+	files, err := os.ReadDir(DATA_TABLE_PATH)
 	if err != nil {
+		fmt.Printf("ReadAllDataTable failed! err: %v\n", err)
 		return err
 	}
 	for _, file := range files {

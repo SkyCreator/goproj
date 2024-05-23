@@ -3,7 +3,6 @@ package main
 import (
 	"GenDataTable/GoData"
 	"fmt"
-	//"reflect"
 )
 
 func main() {
