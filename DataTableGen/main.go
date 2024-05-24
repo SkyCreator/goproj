@@ -1,7 +1,7 @@
 package main
 
 import (
-	"GenDataTable/GoData"
+	"GenDataTable/Out/GoData"
 	"fmt"
 )
 
