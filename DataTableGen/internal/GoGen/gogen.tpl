@@ -2,15 +2,12 @@
 
 package GoData
 
-import (
-	{{- if .NeedStrconv }}"strconv"{{end}}
-	"strings"
-)
+import "strconv"
 
 type DT{{.TableName}} struct {
-    {{range .DataVar}}
-    {{.VarName}}   {{.VarType}} 
-    {{end}}
+    {{- range .TableColData}}
+    {{.ColName}}   {{- if eq .ColType "INT"}} int {{- else if eq .ColType "STRING"}} string {{- else if eq .ColType "BOOL"}} bool{{- else if eq .ColType "FLOAT"}} float64{{- end}}
+    {{- end}}
 }
 
 func NewDT{{.TableName}}() *DT{{.TableName}} {
@@ -18,18 +15,17 @@ func NewDT{{.TableName}}() *DT{{.TableName}} {
 }
 
 func (dt *DT{{.TableName}}) ParseData(data []string) {
-	length := len(data)
-	var idx int = 0
-    {{range .DataVar}}
-	if length > idx {
-        {{- if eq .VarType "INT"}}
-		dt.{{.VarName}}, _ = strconv.Atoi(data[idx])
-        {{- else if eq .VarType "STRING"}}
-        dt.{{.VarName}} = data[idx]
-        {{- end}}
-		idx++
-	}
-     {{- end}}
+{{- range $index,$_ := .TableColData}}
+    {{- if eq .ColType "INT"}}
+	dt.{{.ColName}}, _ = strconv.Atoi(data[{{$index}}])
+    {{- else if eq .ColType "STRING"}}
+    dt.{{.ColName}} = data[{{$index}}]
+	{{- else if eq .ColType "BOOL"}}
+    dt.{{.ColName}}, _ = strconv.ParseBool(data[{{$index}}])
+	{{- else if eq .ColType "FLOAT"}}
+    dt.{{.ColName}}, _ = strconv.ParseFloat(data[{{$index}}], 64)
+    {{- end}}
+{{- end}}
 }
 
 type DT{{.TableName}}Table struct {
@@ -55,11 +51,7 @@ func (dt *DT{{.TableName}}Table) GetAll() []*DT{{.TableName}} {
 func (dt *DT{{.TableName}}Table) parseData(data [][]string) error {
 	l := len(data)
 	var index = 0
-	for i := 3; i < l; i++ {
-		row := data[i][0]
-		if strings.IndexByte(row, '#') == 0 {
-			continue
-		}
+	for i := 0; i < l; i++ {
 		drs := NewDT{{.TableName}}()
 		drs.ParseData(data[i])
 		dt.drs = append(dt.drs, drs)

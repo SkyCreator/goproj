@@ -1,12 +1,12 @@
 package main
 
 import (
-	"GenDataTable/internal"
-	"GenDataTable/internal/GoGen"
-	"GenDataTable/internal/LuaGen"
-	//"GenDataTable/Out/GoData"
+	//"GenDataTable/internal"
+	//"GenDataTable/internal/GoGen"
+	//"GenDataTable/internal/LuaGen"
+	"GenDataTable/GoData"
 	"fmt"
-	"os"
+	//"os"
 )
 
 const (
@@ -14,8 +14,9 @@ const (
 )
 
 func main() {
-	/*测试读表方法
+
 	{
+		//测试读表方法
 		dtManager := GoData.MustInit()
 		dt := dtManager.GetDTUserCommodityTable()
 		fmt.Printf("Rows:%d\n", dt.Rows())
@@ -26,8 +27,8 @@ func main() {
 			fmt.Printf("i = %d, Id:%d, Code:%s, Name:%s, Type:%d, Price:%d, Icon:%s\n", i, data.Id, data.Code, data.Name, data.Type, data.Price, data.Icon)
 		}
 	}
-	*/
-	fmt.Println("os.Args = ", len(os.Args), "os.Args[0] = ", os.Args[0])
+
+	/*fmt.Println("os.Args = ", len(os.Args), "os.Args[0] = ", os.Args[0])
 	allDataTable, err := internal.ReadAllDataTable(DATA_TABLE_PATH)
 	if err != nil {
 		fmt.Println("AutoGen err = ", err)
@@ -45,5 +46,5 @@ func main() {
 	case "all":
 		LuaGen.AutoGen(allDataTable)
 		GoGen.AutoGen(allDataTable)
-	}
+	}*/
 }

@@ -145,3 +145,12 @@ func ParseData(tableName string, rows [][]string) *GoGenDataTable {
 	}
 	return dt
 }
+
+func ForTemplate(dt *GoGenDataTable) *GoGenDataTable {
+	for _, colData := range dt.TableColData {
+		if colData.ColType != "STRING" {
+			break
+		}
+	}
+	return dt
+}
