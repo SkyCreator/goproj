@@ -1,8 +1,9 @@
 package main
 
 import (
-	"GenDataTable/AutoGen/GoGen"
-	"GenDataTable/AutoGen/LuaGen"
+	"GenDataTable/internal"
+	"GenDataTable/internal/GoGen"
+	"GenDataTable/internal/LuaGen"
 	//"GenDataTable/Out/GoData"
 	"fmt"
 	"os"
@@ -27,17 +28,22 @@ func main() {
 	}
 	*/
 	fmt.Println("os.Args = ", len(os.Args), "os.Args[0] = ", os.Args[0])
+	allDataTable, err := internal.ReadAllDataTable(DATA_TABLE_PATH)
+	if err != nil {
+		fmt.Println("AutoGen err = ", err)
+		return
+	}
 	if len(os.Args) <= 1 {
-		GoGen.AutoGen(DATA_TABLE_PATH)
+		GoGen.AutoGen(allDataTable)
 		return
 	}
 	switch os.Args[1] {
 	case "lua":
-		LuaGen.AutoGen(DATA_TABLE_PATH)
+		LuaGen.AutoGen(allDataTable)
 	case "go":
-		GoGen.AutoGen(DATA_TABLE_PATH)
+		GoGen.AutoGen(allDataTable)
 	case "all":
-		LuaGen.AutoGen(DATA_TABLE_PATH)
-		GoGen.AutoGen(DATA_TABLE_PATH)
+		LuaGen.AutoGen(allDataTable)
+		GoGen.AutoGen(allDataTable)
 	}
 }
