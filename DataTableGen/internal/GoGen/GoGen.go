@@ -15,10 +15,13 @@ const (
 )
 
 func AutoGen(tables []*GoGenDataTable) {
-	fmt.Println("-----------GoGen AutoGen!-----------")
+	fmt.Println("")
+	fmt.Println("-----------Go AutoGen start!-----------")
 	for _, table := range tables {
 		internal.GenByTemplate(OUT_PATH+table.TableName+".go", TEMPLATE_NAME, table)
 	}
 	internal.GenByTemplate(OUT_PATH+FACTORY_NAME+".go", FACTORY_TEMPLATE_NAME, tables)
+	fmt.Println("-----------Go AutoGen end!-----------")
+	fmt.Println("")
 }
 

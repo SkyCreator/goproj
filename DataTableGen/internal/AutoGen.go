@@ -113,11 +113,6 @@ func ReadAllDataTable(tableDir string) ([]*GoGenDataTable, error) {
 		}
 		dt := ParseData(tableName, rows)
 		allDataTable = append(allDataTable, dt)
-		fmt.Printf("dt.TableName:%s\n", dt.TableName)
-		for i := 0; i < len(dt.TableColData); i++ {
-			data := dt.TableColData[i]
-			fmt.Printf("i : %d, ColName : %s, ColType : %s, ColValue : = %v\n", i, data.ColName, data.ColType, data.ColValue)
-		}
 	}
 	return allDataTable, nil
 }
@@ -214,20 +209,23 @@ func ForTemplate(dt *GoGenDataTable) *GoGenDataTable {
 	return dt
 }
 
-func GenByTemplate(outPath string, tmplPath string, data any) {
+func GenByTemplate(outAllPath string, tmplPath string, data any) {
+	outPathPos := strings.LastIndexByte(outAllPath, '/')
+	outPath := outAllPath[:outPathPos]
+	os.MkdirAll(outPath, os.ModeDir|os.ModePerm)
 	pos := strings.LastIndexByte(tmplPath, '/')
 	tmplName := tmplPath[pos+1:]
 	tmpl := template.New(tmplName).Funcs(template.FuncMap{
 		"add": func(a, b int) int { return a + b }})
 	tmpl, err := tmpl.ParseFiles(tmplPath)
 	CheckErr(err)
-	os.Remove(outPath)
-	f, err := os.OpenFile(outPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
+	os.Remove(outAllPath)
+	f, err := os.OpenFile(outAllPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
 	CheckErr(err)
 	defer f.Close()
 	err = tmpl.Execute(f, data)
 	CheckErr(err)
-	fmt.Printf("gen file：%s\n", outPath)
+	fmt.Printf("gen file：%s\n", outAllPath)
 }
 func CheckErr(err error) {
 	if err != nil {

@@ -28,7 +28,7 @@ func main() {
 			}
 		}*/
 
-	fmt.Println("os.Args = ", len(os.Args), "os.Args[0] = ", os.Args[0])
+	//fmt.Println("os.Args = ", len(os.Args), "os.Args[0] = ", os.Args[0])
 	allDataTable, err := internal.ReadAllDataTable(DATA_TABLE_PATH)
 	if err != nil {
 		fmt.Println("AutoGen err = ", err)
