@@ -5,6 +5,14 @@ import (
 	"fmt"
 )
 
-func AutoGen(tables []*internal.GoGenDataTable) {
+type GoGenDataTable = internal.GoGenDataTable
+const (
+	TEMPLATE_NAME         = "./internal/LuaGen/lua.tpl"
+	OUT_PATH              = "./Out/Lua/"
+)
+func AutoGen(tables []*GoGenDataTable) {
 	fmt.Println("Lua AutoGen!")
+	for _, table := range tables {
+		internal.GenByTemplate(OUT_PATH+table.TableName+".lua", TEMPLATE_NAME, table)
+	}
 }

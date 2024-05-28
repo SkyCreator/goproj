@@ -5,12 +5,13 @@ import (
 	"github.com/xuri/excelize/v2"
 	"os"
 	"strings"
+	"text/template"
 )
 
 type GoGenColData struct {
 	ColType  string   //表列类型名
 	ColName  string   //表列名
-	ColValue []string //表列的行数据值
+	ColValue []string //表列的行数据
 }
 
 func (cd *GoGenColData) SetColInfo(colType string, colName string) {
@@ -22,9 +23,28 @@ func (cd *GoGenColData) AddColValue(colValue string) {
 	cd.ColValue = append(cd.ColValue, colValue)
 }
 
+type GoGenCellData struct {
+	CellType  string
+	CellName  string
+	CellValue string
+}
+type GoGenRowData struct {
+	CellId   string
+	CellData []GoGenCellData
+}
+
+func (rd *GoGenRowData) AddRowInfo(cellType string, cellName string, CellValue string) {
+	if cellType == "BOOL" {
+		CellValue = strings.ToLower(CellValue)
+	}
+	rd.CellData = append(rd.CellData, GoGenCellData{CellType: cellType, CellName: cellName, CellValue: CellValue})
+}
+
 type GoGenDataTable struct {
-	TableName    string         //表名
-	TableColData []GoGenColData //表列数据
+	TableName      string         //表名
+	TableColData   []GoGenColData //表列数据
+	TableRowData   []GoGenRowData //表行数据							for lua
+	SpecialRowData GoGenRowData   //特殊行数据,各个列数据出现最多的入选   for lua
 }
 
 func (dt *GoGenDataTable) SetColInfo(colTypes []string, colNames []string) {
@@ -35,6 +55,42 @@ func (dt *GoGenDataTable) SetColInfo(colTypes []string, colNames []string) {
 func (dt *GoGenDataTable) AddColValue(colIdx int, colValue string) {
 	dt.TableColData[colIdx].AddColValue(colValue)
 }
+func (dt *GoGenDataTable) SetRowInfo(rowsValue [][]string) {
+	typeCols := rowsValue[0]
+	nameCols := rowsValue[1]
+	dataRows := rowsValue[2:]
+	dt.TableRowData = make([]GoGenRowData, len(dataRows))
+	for i := 0; i < len(dataRows); i++ {
+		row := dataRows[i]
+		dt.TableRowData[i].CellId = row[0]
+		for j := 0; j < len(row); j++ {
+			if j > 0 && row[j] == dt.SpecialRowData.CellData[j-1].CellValue {
+				continue
+			}
+			dt.TableRowData[i].AddRowInfo(typeCols[j], nameCols[j], row[j])
+
+		}
+	}
+}
+func (dt *GoGenDataTable) SetSpecialRowData() {
+	for i := 1; i < len(dt.TableColData); i++ {
+		colData := dt.TableColData[i].ColValue
+		specialValue := make(map[string]int, len(colData))
+		for j := 0; j < len(colData); j++ {
+			specialValue[colData[j]] = specialValue[colData[j]] + 1
+		}
+		maxCount := 0
+		maxValue := ""
+		for k, v := range specialValue {
+			if v > maxCount {
+				maxCount = v
+				maxValue = k
+			}
+		}
+		dt.SpecialRowData.AddRowInfo(dt.TableColData[i].ColType, dt.TableColData[i].ColName, maxValue)
+	}
+}
+
 func NewGoGenDataTable(tableName string, colsNum int) *GoGenDataTable {
 	return &GoGenDataTable{TableName: tableName, TableColData: make([]GoGenColData, colsNum)}
 }
@@ -135,6 +191,7 @@ func ParseData(tableName string, rows [][]string) *GoGenDataTable {
 	dt := NewGoGenDataTable(tableName, colsNum)
 	dt.SetColInfo(colTypes, colNames)
 	dataRows := filterRows[2:]
+	//dt.SetRowInfo(filterRows)
 	// 获取行数
 	rowsNum := len(dataRows)
 	for i := 0; i < rowsNum; i++ {
@@ -143,6 +200,8 @@ func ParseData(tableName string, rows [][]string) *GoGenDataTable {
 			dt.AddColValue(j, dataRow[j])
 		}
 	}
+	dt.SetSpecialRowData()
+	dt.SetRowInfo(filterRows)
 	return dt
 }
 
@@ -153,4 +212,25 @@ func ForTemplate(dt *GoGenDataTable) *GoGenDataTable {
 		}
 	}
 	return dt
+}
+
+func GenByTemplate(outPath string, tmplPath string, data any) {
+	pos := strings.LastIndexByte(tmplPath, '/')
+	tmplName := tmplPath[pos+1:]
+	tmpl := template.New(tmplName).Funcs(template.FuncMap{
+		"add": func(a, b int) int { return a + b }})
+	tmpl, err := tmpl.ParseFiles(tmplPath)
+	CheckErr(err)
+	os.Remove(outPath)
+	f, err := os.OpenFile(outPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
+	CheckErr(err)
+	defer f.Close()
+	err = tmpl.Execute(f, data)
+	CheckErr(err)
+	fmt.Printf("gen file：%s\n", outPath)
+}
+func CheckErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
