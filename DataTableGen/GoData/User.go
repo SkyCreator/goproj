@@ -12,20 +12,13 @@ type DTUser struct {
     AGE int
 }
 
-func NewDTUser() *DTUser {
-	return &DTUser{}
-}
-
-func (dt *DTUser) ParseData(data []string) {
-	dt.Id, _ = strconv.Atoi(data[0])
-    dt.Name = data[1]
-    dt.Height, _ = strconv.ParseFloat(data[2], 64)
-    dt.Sex, _ = strconv.ParseBool(data[3])
-	dt.AGE, _ = strconv.Atoi(data[4])
-}
-
-type DTUserTable struct {
-	drs []*DTUser
+func (dtm *DataTableManager) GetDTUserTable() *DTUserTable {
+	if dt, ok := dtm.DataTableMap["DTUser"]; ok {
+		return dt.(*DTUserTable)
+	}
+	dt := &DTUserTable{}
+	dtm.DataTableMap["DTUser"] = dt
+	return dt
 }
 
 func (dt *DTUserTable) Rows() int {
@@ -40,26 +33,35 @@ func (dt *DTUserTable) Get(id int) *DTUser {
 	}
 	return nil
 }
+
 func (dt *DTUserTable) GetAll() []*DTUser {
 	return dt.drs
+}
+
+func newDTUser() *DTUser {
+	return &DTUser{}
+}
+
+func (dt *DTUser) parseData(data []string) {
+	dt.Id, _ = strconv.Atoi(data[0])
+    dt.Name = data[1]
+    dt.Height, _ = strconv.ParseFloat(data[2], 64)
+    dt.Sex, _ = strconv.ParseBool(data[3])
+	dt.AGE, _ = strconv.Atoi(data[4])
+}
+
+type DTUserTable struct {
+	drs []*DTUser
 }
 
 func (dt *DTUserTable) parseData(data [][]string) error {
 	l := len(data)
 	var index = 0
 	for i := 0; i < l; i++ {
-		drs := NewDTUser()
-		drs.ParseData(data[i])
+		drs := newDTUser()
+		drs.parseData(data[i])
 		dt.drs = append(dt.drs, drs)
 		index++
 	}
 	return nil
-}
-func (dtm *DataTableManager) GetDTUserTable() *DTUserTable {
-	if dt, ok := dtm.DataTableMap["DTUser"]; ok {
-		return dt.(*DTUserTable)
-	}
-	dt := &DTUserTable{}
-	dtm.DataTableMap["DTUser"] = dt
-	return dt
 }

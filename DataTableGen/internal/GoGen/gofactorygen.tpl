@@ -2,7 +2,7 @@
 
 package GoData
 
-func (d *DataTableManager) CreateAndParseDataTable(name string, rows [][]string) error {
+func (d *DataTableManager) createAndParseDataTable(name string, rows [][]string) error {
     switch name {
     {{- range .}}   
 	case "DT{{.TableName}}":

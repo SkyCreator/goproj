@@ -15,15 +15,24 @@ type DataTableManager struct {
 	DataTableMap map[string]any
 }
 
-func MustInit() *DataTableManager {
+var dtManager *DataTableManager = nil
+
+func GetDTManager() *DataTableManager {
+	if dtManager == nil {
+		dtManager = mustInit()
+		return dtManager
+	}
+	return dtManager
+}
+func mustInit() *DataTableManager {
 	manager := newDataTableManager()
-	manager.ReadAllDataTable()
+	manager.readAllDataTable()
 	return manager
 }
 func newDataTableManager() *DataTableManager {
 	return &DataTableManager{DataTableMap: make(map[string]any)}
 }
-func (d *DataTableManager) ReadAllDataTable() error {
+func (d *DataTableManager) readAllDataTable() error {
 	files, err := os.ReadDir(DATA_TABLE_PATH)
 	if err != nil {
 		fmt.Printf("ReadAllDataTable failed! err: %v\n", err)
@@ -33,11 +42,11 @@ func (d *DataTableManager) ReadAllDataTable() error {
 		if file.IsDir() {
 			continue
 		}
-		d.ReadData(DATA_TABLE_PATH, file.Name())
+		d.readData(DATA_TABLE_PATH, file.Name())
 	}
 	return nil
 }
-func (d *DataTableManager) ReadData(path string, allName string) error {
+func (d *DataTableManager) readData(path string, allName string) error {
 	f, err := excelize.OpenFile(path + allName)
 	if err != nil {
 		fmt.Println(err)
@@ -65,12 +74,12 @@ func (d *DataTableManager) ReadData(path string, allName string) error {
 		return err
 	}
 	dtName = "DT" + dtName
-	filterRows := d.FilterData(rows)
+	filterRows := d.filterData(rows)
 	dataRows := filterRows[2:]
-	err = d.CreateAndParseDataTable(dtName, dataRows)
+	err = d.createAndParseDataTable(dtName, dataRows)
 	return err
 }
-func (d *DataTableManager) FilterData(rows [][]string) [][]string {
+func (d *DataTableManager) filterData(rows [][]string) [][]string {
 	colsNum := len(rows[0]) - 1
 	filterRows := make([][]string, 0)
 	for i := 0; i < len(rows); i++ {

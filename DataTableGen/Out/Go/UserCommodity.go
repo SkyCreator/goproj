@@ -13,21 +13,13 @@ type DTUserCommodity struct {
     Icon string
 }
 
-func NewDTUserCommodity() *DTUserCommodity {
-	return &DTUserCommodity{}
-}
-
-func (dt *DTUserCommodity) ParseData(data []string) {
-	dt.Id, _ = strconv.Atoi(data[0])
-    dt.Code = data[1]
-    dt.Name = data[2]
-	dt.Type, _ = strconv.Atoi(data[3])
-	dt.Price, _ = strconv.Atoi(data[4])
-    dt.Icon = data[5]
-}
-
-type DTUserCommodityTable struct {
-	drs []*DTUserCommodity
+func (dtm *DataTableManager) GetDTUserCommodityTable() *DTUserCommodityTable {
+	if dt, ok := dtm.DataTableMap["DTUserCommodity"]; ok {
+		return dt.(*DTUserCommodityTable)
+	}
+	dt := &DTUserCommodityTable{}
+	dtm.DataTableMap["DTUserCommodity"] = dt
+	return dt
 }
 
 func (dt *DTUserCommodityTable) Rows() int {
@@ -42,26 +34,36 @@ func (dt *DTUserCommodityTable) Get(id int) *DTUserCommodity {
 	}
 	return nil
 }
+
 func (dt *DTUserCommodityTable) GetAll() []*DTUserCommodity {
 	return dt.drs
+}
+
+func newDTUserCommodity() *DTUserCommodity {
+	return &DTUserCommodity{}
+}
+
+func (dt *DTUserCommodity) parseData(data []string) {
+	dt.Id, _ = strconv.Atoi(data[0])
+    dt.Code = data[1]
+    dt.Name = data[2]
+	dt.Type, _ = strconv.Atoi(data[3])
+	dt.Price, _ = strconv.Atoi(data[4])
+    dt.Icon = data[5]
+}
+
+type DTUserCommodityTable struct {
+	drs []*DTUserCommodity
 }
 
 func (dt *DTUserCommodityTable) parseData(data [][]string) error {
 	l := len(data)
 	var index = 0
 	for i := 0; i < l; i++ {
-		drs := NewDTUserCommodity()
-		drs.ParseData(data[i])
+		drs := newDTUserCommodity()
+		drs.parseData(data[i])
 		dt.drs = append(dt.drs, drs)
 		index++
 	}
 	return nil
-}
-func (dtm *DataTableManager) GetDTUserCommodityTable() *DTUserCommodityTable {
-	if dt, ok := dtm.DataTableMap["DTUserCommodity"]; ok {
-		return dt.(*DTUserCommodityTable)
-	}
-	dt := &DTUserCommodityTable{}
-	dtm.DataTableMap["DTUserCommodity"] = dt
-	return dt
 }

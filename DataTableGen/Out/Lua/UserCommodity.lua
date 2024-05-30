@@ -4,12 +4,12 @@
 
 DRUserCommodity = {
         [91] = {Id = 91,Code = "SUPREME",Name = "王国商城至尊勋章",Price = 49999,Icon = "aaa.png", },
-        [327] = {Id = 327,Code = "19VIPPLUS",Name = "赞助助手",Price = 30, },
-        [353] = {Id = 353,Code = "18VIPAM",Price = 15, },
+        [327] = {Id = 327,Name = "赞助助手",Price = 30, },
+        [353] = {Id = 353,Code = "18VIPAM",Name = "会员月卡",Price = 15, },
         [361] = {Id = 361,Code = "19ITEMR00G",Name = "",Price = 1, },
         [391] = {Id = 391,Code = "18TOOLSF",Name = "永久王牌指挥", },
-        [392] = {Id = 392,Name = "永久干扰精通",Price = 168,Icon = "bbb.png", },
-        [405] = {Id = 405,Code = "18TOOLSI",Name = "永久运筹帷幄", },
+        [392] = {Id = 392,Code = "18TOOLSB",Name = "永久干扰精通",Price = 168,Icon = "bbb.png", },
+        [405] = {Id = 405,Code = "18TOOLSI", },
         [406] = {Id = 406,Code = "18TOOLSG",Name = "永久排兵布阵",Price = 168, },
         [407] = {Id = 407,Code = "18TOOLSE",Name = "永久快速建造", },
         [408] = {Id = 408,Code = "18TOOLSD",Name = "永久末日预言",Price = 168, },
@@ -20,7 +20,7 @@ DRUserCommodity = {
         [418] = {Id = 418,Code = "18VIPA",Name = "永久会员",Price = 188,Icon = "ccc.png", },
 }
 
-local _default = {Code = "18TOOLSB",Name = "会员月卡",Type = 1,Price = 88,Icon = "",
+local _default = {Code = "19VIPPLUS",Name = "永久运筹帷幄",Type = 1,Price = 88,Icon = "",
 }
 
 local _base = {

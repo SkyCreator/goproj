@@ -150,8 +150,10 @@ func ReadData(tableDir string, allName string) (tableName string, rows [][]strin
 
 //过滤数据，去除第二列，去除第二行，去除掉#开头的行
 func FilterData(rows [][]string) [][]string {
+	//fmt.Println("AutoGen FilterData")
 	colsNum := len(rows[0]) - 1
 	filterRows := make([][]string, 0)
+	//fmt.Println("AutoGen FilterData rows length is ", len(rows))
 	for i := 0; i < len(rows); i++ {
 		// 过滤掉第二行
 		if i == 1 {

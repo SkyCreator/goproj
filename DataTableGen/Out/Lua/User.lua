@@ -3,13 +3,13 @@
 -- ------------------------------------------------------------
 
 DRUser = {
-        [1] = {Id = 1,Height = 182, },
+        [1] = {Id = 1, },
         [2] = {Id = 2,Name = "bbb",Height = 178.65,Sex = 0,AGE = 35, },
-        [3] = {Id = 3,Name = "ccc",Sex = true,AGE = 41, },
+        [3] = {Id = 3,Name = "ccc",Height = 192,Sex = true,AGE = 41, },
         [4] = {Id = 4,Name = "ddd",Height = 162,Sex = false,AGE = 82, },
 }
 
-local _default = {Name = "aaa",Height = 192,Sex = 1,AGE = 18,
+local _default = {Name = "aaa",Height = 182,Sex = 1,AGE = 18,
 }
 
 local _base = {
