@@ -25,7 +25,14 @@ func (dt *DTUserTable) Rows() int {
 	return len(dt.drs)
 }
 
-func (dt *DTUserTable) Get(id int) *DTUser {
+func (dt *DTUserTable) Get(index int) *DTUser {
+	if index < 0 || index >= len(dt.drs) {
+		return nil
+	}
+	return dt.drs[index]
+}
+
+func (dt *DTUserTable) GetById(id int) *DTUser {
 	for i := 0; i < len(dt.drs); i++ {
 		if dt.drs[i] != nil && dt.drs[i].Id == id {
 			return dt.drs[i]
