@@ -23,7 +23,14 @@ func (dt *DT{{.TableName}}Table) Rows() int {
 	return len(dt.drs)
 }
 
-func (dt *DT{{.TableName}}Table) Get(id int) *DT{{.TableName}} {
+func (dt *DT{{.TableName}}Table) Get(index int) *DT{{.TableName}} {
+	if index < 0 || index >= len(dt.drs) {
+		return nil
+	}
+	return dt.drs[index]
+}
+
+func (dt *DT{{.TableName}}Table) GetById(id int) *DT{{.TableName}} {
 	for i := 0; i < len(dt.drs); i++ {
 		if dt.drs[i] != nil && dt.drs[i].Id == id {
 			return dt.drs[i]
