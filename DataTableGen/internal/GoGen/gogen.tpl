@@ -20,27 +20,18 @@ func (dtm *DataTableManager) GetDT{{.TableName}}Table() *DT{{.TableName}}Table {
 }
 
 func (dt *DT{{.TableName}}Table) Rows() int {
-	return len(dt.drs)
+	return len(dt.mapData)
 }
 
-func (dt *DT{{.TableName}}Table) Get(index int) *DT{{.TableName}} {
-	if index < 0 || index >= len(dt.drs) {
+func (dt *DT{{.TableName}}Table) Get(key int) *DT{{.TableName}} {
+	if key < 0 {
 		return nil
 	}
-	return dt.drs[index]
+	return dt.mapData[key]
 }
 
-func (dt *DT{{.TableName}}Table) GetById(id int) *DT{{.TableName}} {
-	for i := 0; i < len(dt.drs); i++ {
-		if dt.drs[i] != nil && dt.drs[i].Id == id {
-			return dt.drs[i]
-		}
-	}
-	return nil
-}
-
-func (dt *DT{{.TableName}}Table) GetAll() []*DT{{.TableName}} {
-	return dt.drs
+func (dt *DT{{.TableName}}Table) GetAll() map[int]*DT{{.TableName}} {
+	return dt.mapData
 }
 
 func newDT{{.TableName}}() *DT{{.TableName}} {
@@ -62,7 +53,7 @@ func (dt *DT{{.TableName}}) parseData(data []string) {
 }
 
 type DT{{.TableName}}Table struct {
-	drs []*DT{{.TableName}}
+	mapData map[int]*DT{{.TableName}}
 }
 
 func (dt *DT{{.TableName}}Table) parseData(data [][]string) error {
@@ -71,7 +62,7 @@ func (dt *DT{{.TableName}}Table) parseData(data [][]string) error {
 	for i := 0; i < l; i++ {
 		drs := newDT{{.TableName}}()
 		drs.parseData(data[i])
-		dt.drs = append(dt.drs, drs)
+		dt.mapData[drs.Id] = drs
 		index++
 	}
 	return nil
